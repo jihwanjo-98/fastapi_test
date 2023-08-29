@@ -27,7 +27,6 @@ class Classifierschema(BaseModel):
     time: time
     dt : str
     obs_id: int
-    inter_key: int
 
     
 class Damageschema(BaseModel):
@@ -38,7 +37,6 @@ class Damageschema(BaseModel):
     summary:str
     damage_class: int
     obs_id: int
-    inter_key: int
 
 class Rainschema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -51,16 +49,19 @@ class Rainschema(BaseModel):
     after1 : float
     after2 : float
     after3 : float
+    rain_id:int
 
 class Hotschema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     obs_id: int
     date: date
     time: time
+    value : float
     value1: float
     value2: float
     value3: float
     target: str
+    hot_id:int
 
 class Actionsschema(BaseModel):
     model_config = ConfigDict(from_attributes=True)

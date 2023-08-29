@@ -41,14 +41,20 @@ async def now_info(db: Session = Depends(get_db)): #, response_model=schemas.Pos
 @router.get("/interest/")
 async def interest_info(db: Session = Depends(get_db)):
     interest_info={}
-    subq = db.query(   # 최신 날짜를 찾는 서브쿼리 생성
-        func.max(Classifier.date).label("latest_date"), Classifier.inter_key
-    ).group_by(Classifier.inter_key).subquery()
     
-    interest_value = db.query(Classifier).join(subq,and_(
-        Classifier.date == subq.c.latest_date,
-        Classifier.inter_key == subq.c.inter_key
-    )).all()
+    subquery = (
+    db.query(func.max(Classifier.dt).label("max_dt"), My_regions.obs_id)
+    .join(Regions, Classifier.obs_id == Regions.obs_id)
+    .join(My_regions, Regions.obs_id == My_regions.obs_id)
+    .group_by(My_regions.obs_id)
+    .subquery()
+    )
+    
+    interest_value = db.query(Classifier).join(Regions,
+        Classifier.obs_id == Regions.obs_id).join(My_regions,Regions.obs_id == My_regions.obs_id).join(subquery, 
+          (Classifier.dt == subquery.c.max_dt) & 
+          (My_regions.obs_id == subquery.c.obs_id)).order_by(desc(Classifier.dt))
+    
     if interest_value:
         interest_info['interest_value']=[json.loads(Classifierschema.from_orm(item).model_dump_json()) for item in interest_value]
     if interest_info:

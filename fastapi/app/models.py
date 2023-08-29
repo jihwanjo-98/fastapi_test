@@ -29,9 +29,7 @@ class My_regions(Base):
     obs_id = Column(Integer, ForeignKey('regions.obs_id'))
     
     my_region_to_region = relationship("Regions",back_populates="region_to_my_region")
-    my_region_to_classifier = relationship("Classifier", back_populates="classifier_to_my_region")
-    my_region_to_damage = relationship("Damage", back_populates="damage_to_my_region")
-    
+
 class Damage(Base):
     __tablename__ = 'damage'
     d_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -40,12 +38,10 @@ class Damage(Base):
     summary=Column(String(500))
     damage_class = Column(Integer)
     obs_id = Column(Integer, ForeignKey('regions.obs_id'))
-    inter_key = Column(Integer, ForeignKey('my_regions.inter_key'))
 
     # Relationships
     damage_to_region = relationship("Regions", back_populates="region_to_damage")
-    damage_to_my_region = relationship("My_regions", back_populates="my_region_to_damage")
-
+    
 class Actions(Base):
     __tablename__ = 'actions'
     disaster = Column(String(20))
@@ -64,15 +60,14 @@ class Classifier(Base):
     time = Column(Time)
     dt = Column(String(50))
     obs_id = Column(Integer, ForeignKey('regions.obs_id'))
-    inter_key = Column(Integer, ForeignKey('my_regions.inter_key'))
 
     # Relationships
     classifier_to_region = relationship("Regions", back_populates="region_to_classifier")
-    classifier_to_my_region = relationship("My_regions", back_populates="my_region_to_classifier")
+
 
 class Rain(Base):
     __tablename__ = 'rain'
-    obs_id = Column(Integer, ForeignKey('regions.obs_id'), primary_key=True, autoincrement=True)
+    obs_id = Column(Integer, ForeignKey('regions.obs_id'))
     date = Column(Date)
     time = Column(Time)
     before1 = Column(Float)
@@ -81,18 +76,21 @@ class Rain(Base):
     after1= Column(Float)
     after2= Column(Float)
     after3= Column(Float)
+    rain_id = Column(Integer, primary_key=True, autoincrement=True)
     # Relationships
     rain_to_region = relationship("Regions", back_populates="region_to_rain")
 
 class Hot(Base):
     __tablename__ = 'hot'
-    obs_id = Column(Integer, ForeignKey('regions.obs_id'), primary_key=True, autoincrement=True)
+    obs_id = Column(Integer, ForeignKey('regions.obs_id'))
     date = Column(Date)
     time = Column(Time)
+    value = Column(Float)
     value1 = Column(Float)
     value2 = Column(Float)
     value3 = Column(Float)
     target = Column(String(100))
+    hot_id = Column(Integer, primary_key=True, autoincrement=True)
 
     # Relationships
     hot_to_region = relationship("Regions", back_populates="region_to_hot")
